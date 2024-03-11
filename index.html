@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+    width: 500px;
+    height: 500px;
+}
+#arrowkeys {
+    text-align:center;
+    width:480px;
+}
+</style>
+</head>
+<body onload="startGame(), startGame2()">
+<script>
+var myGamePiece1;
+var myGamePiece2;
+var ladder1;
+var ygrav = -2;
+
+function startGame() {
+    myGamePiece1 = new component(15, 15, "Inverted_PacMan.png", 35, 120, "image", "1");
+    ladder1 = new component(15, 100, "Ladder.png", 100, 100, "image", "1");
+    myGameArea.start();
+}
+function startGame2() {
+    myGamePiece2 = new component(15, 15, "Original_PacMan.png", 250, 120, "image", "2");
+
+    myGameArea2.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
+    }
+}
+var ground = myGameArea.canvas.height - this.height;
+function component(width, height, color, x, y, type, place) {
+    this.type = type;
+    this.place = place;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;  
+        if (place == "1") {
+    this.update = function() {
+        ctx = myGameArea2.context; //Changing game areas turn it to a drawing game for some reason (nvm it has to do with clear())
+        if (type == "image") {
+            ctx.drawImage(
+                this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;  
+        this.y = this.y +0.5;          
+        var ground = myGameArea.canvas.height - this.height;
+        if (this.y > ground) {
+            this.y = ground;
+            ygrav = -2;
+        }
+    }
+    this.elevate = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        hit = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            hit = false;
+        }
+        return hit;
+    }
+} 
+if (place == "2") {
+    this.update = function() {
+        ctx = myGameArea.context; //Changing game areas turn it to a drawing game for some reason (nvm it has to do with clear())
+        if (type == "image") {
+            ctx.drawImage(
+                this.image, 
+                this.x, 
+                this.y,
+                this.width, this.height);
+        }
+    }
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;  
+        this.y = this.y +0.5;   
+        var ground = myGameArea.canvas.height - this.height;
+        if (this.y > ground) {
+            this.y = ground;
+            ygrav = -2
+        }
+    }
+    this.elevate = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var hit = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            hit = false;
+        }
+        return hit;
+    }
+}
+
+}
+var myGameArea2 = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.frameNo = 0;
+        this.interval = setInterval(updateGameArea, 20);
+        },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+}
+function updateGameArea() {
+    if (myGamePiece1.elevate(ladder1)) {
+    document.getElementById('goup').disabled = false;
+    myGameArea.clear();
+    myGameArea2.clear(); 
+    myGamePiece2.newPos();
+    myGamePiece2.update();
+    myGamePiece1.newPos();
+    myGamePiece1.update();
+    ladder1.newPos();
+    ladder1.update();
+  } else {
+    document.getElementById('goup').disabled = true;
+    ygrav = 0;
+    myGameArea.clear();
+    myGameArea2.clear(); 
+    myGamePiece2.newPos();
+    myGamePiece2.update();
+    myGamePiece1.newPos();
+    myGamePiece1.update();
+    ladder1.newPos();
+    ladder1.update();
+    }
+}
+function moveme(direction) {
+    if(direction == 'up') {
+    myGamePiece1.speedY = ygrav;
+    myGamePiece2.speedY = ygrav;
+    } else if(direction == 'left')  {
+    myGamePiece1.speedX = 2; //inverted for mirrored effect
+    myGamePiece2.speedX = -2;
+    } else if(direction == 'down') {
+    myGamePiece1.speedY = 2;
+    myGamePiece2.speedY = 2;
+    } else {
+    myGamePiece1.speedX = -2; //inverted for mirrored effect
+    myGamePiece2.speedX = 2; 
+    }
+}
+function clearmove() {
+    myGamePiece1.speedX = 0; 
+    myGamePiece1.speedY = 0; 
+    myGamePiece2.speedX = 0; 
+    myGamePiece2.speedY = 0; 
+}
+function changegravity() {
+    if (this.y < ground) {
+            ygrav += 0.03;
+            console.log("hello");
+        }
+}
+</script>
+<div id="arrowkeys">
+  <button onmousedown="moveme('up'), changegravity()" onmouseup="clearmove()" id="goup">^</button><br><br>
+  <button onmousedown="moveme('left')" onmouseup="clearmove()" >&#60;</button>
+  <button onmousedown="moveme('right')" onmouseup="clearmove()" >></button><br><br>
+  <button onmousedown="moveme('down')" onmouseup="clearmove()">v</button>
+</div>
+</body>
+</html>
