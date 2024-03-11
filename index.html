@@ -203,10 +203,10 @@ function changegravity() {
 }
 </script>
 <div id="arrowkeys">
-  <button onmousedown="moveme('up'), changegravity()" onmouseup="clearmove()" id="goup">^</button><br><br>
-  <button onmousedown="moveme('left')" onmouseup="clearmove()" >&#60;</button>
-  <button onmousedown="moveme('right')" onmouseup="clearmove()" >></button><br><br>
-  <button onmousedown="moveme('down')" onmouseup="clearmove()">v</button>
+  <button onmousedown="moveme('up'), changegravity()" onmouseup="clearmove()" ontouchstart="moveme('up')" id="goup">^</button><br><br>
+  <button onmousedown="moveme('left')" onmouseup="clearmove()" ontouchstart="moveme('left')">&#60;</button>
+  <button onmousedown="moveme('right')" onmouseup="clearmove()" ontouchstart="moveme('right')">></button><br><br>
+  <button onmousedown="moveme('down')" onmouseup="clearmove()" ontouchstart="moveme('down')">v</button>
 </div>
 </body>
 </html>
